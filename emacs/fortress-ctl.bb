@@ -277,9 +277,12 @@
                        "Send failed"))))))))
 
 (defmethod cmd :olc [_ lat-s lng-s & [prec-s]]
-  (let [lat (parse-double lat-s)
-        lng (parse-double lng-s)
-        prec (or (some-> prec-s parse-long) 10)
+  (when-not (and lat-s lng-s)
+    (println "Usage: olc <lat> <lng> [precision]")
+    (System/exit 1))
+  (let [lat (parse-double (str lat-s))
+        lng (parse-double (str lng-s))
+        prec (or (some-> prec-s str parse-long) 10)
         code (olc-encode lat lng prec)
         trit (olc-trit code)]
     (println (format "%s  trit:%+d  (%.4f, %.4f) precision=%d" code trit lat lng prec))))
